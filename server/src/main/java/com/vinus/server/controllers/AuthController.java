@@ -10,12 +10,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(
-        origins = {"http://localhost:5173", "https://vinus-app.vercel.app"},
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS},
-        allowedHeaders = "*",
-        allowCredentials = "true"
-)
 public class AuthController {
 
     @Autowired
