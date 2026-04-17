@@ -23,7 +23,7 @@ public class Product {
     private Double price;
     private String category;
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TEXT")
     private String image_url;
 
     private String status;

@@ -21,6 +21,6 @@ public class Usuario {
     @Column(length = 500)
     private String sobreMi;
     private String intereses;
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TEXT")
     private String fotoPerfil;
 }

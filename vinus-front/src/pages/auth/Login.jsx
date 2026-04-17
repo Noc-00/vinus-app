@@ -23,6 +23,7 @@ export default function Login() {
 
       if (userData && userData.nombre) {
         localStorage.setItem('usuario_nombre', userData.nombre);
+        localStorage.setItem('userEmail', userData.email);
       }
 
       login(userData, userData.email);

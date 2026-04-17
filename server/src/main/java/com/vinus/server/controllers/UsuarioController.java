@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class UsuarioController {
 
     @Autowired
@@ -38,6 +38,13 @@ public class UsuarioController {
                     usuarioRepository.save(usuarioExistente);
                     return ResponseEntity.ok(usuarioExistente);
                 })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> obtenerMiPerfil(@RequestParam String email) {
+        return usuarioRepository.findByEmail(email)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 }

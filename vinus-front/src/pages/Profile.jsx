@@ -5,7 +5,6 @@ import apiClient from '@/api/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { useAuth } from '@/lib/AuthContext';
 import ProductDetailModal from '@/components/shop/ProductDetailModal';
 
 const interestOptions = ['Matemáticas', 'Ciencias', 'Programación', 'Arte', 'Música', 'Deportes', 'Idiomas', 'Historia', 'Negocios', 'Ingeniería', 'Derecho', 'Medicina'];
@@ -13,7 +12,6 @@ const avatarStyles = ['adventurer', 'bottts', 'pixel-art', 'notionists', 'thumbs
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -22,46 +20,56 @@ export default function Profile() {
   const [misProductos, setMisProductos] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // 'form' ahora es la única fuente de verdad para los datos del usuario
   const [form, setForm] = useState({
+    nombre: '',
+    email: '',
     sobreMi: '',
     institucion: '',
     intereses: '',
-    email: '',
     fotoPerfil: 'adventurer'
   });
 
   const loadData = async () => {
-    if (!user) return;
-    setForm({
-      email: user.email,
-      sobreMi: user.sobreMi || '',
-      institucion: user.institucion || '',
-      intereses: user.intereses || '',
-      fotoPerfil: user.fotoPerfil || 'adventurer',
-    });
-
+    setLoading(true);
     try {
+      const email = localStorage.getItem('userEmail');
       const nombreUsuario = localStorage.getItem('usuario_nombre');
-      const [qRes, pRes] = await Promise.all([
-        apiClient.get(`/forum-questions/my-questions?author=${nombreUsuario}`).catch(() => ({ data: [] })),
-        apiClient.get(`/products/my-products?author=${nombreUsuario}`).catch(() => ({ data: [] }))
-      ]);
-      setMisPreguntas(qRes.data);
-      setMisProductos(pRes.data);
-    } catch (e) {
-      console.error("Error cargando contribuciones", e);
-    }
 
-    setLoading(false);
+      if (email) {
+        // Obtenemos los datos frescos desde el backend
+        const userRes = await apiClient.get(`/usuarios/me?email=${email}`);
+        setForm({
+          nombre: userRes.data.nombre || '',
+          email: userRes.data.email || '',
+          sobreMi: userRes.data.sobreMi || '',
+          institucion: userRes.data.institucion || '',
+          intereses: userRes.data.intereses || '',
+          fotoPerfil: userRes.data.fotoPerfil || 'adventurer',
+        });
+      }
+
+      if (nombreUsuario) {
+        const [qRes, pRes] = await Promise.all([
+          apiClient.get(`/forum-questions/my-questions?author=${nombreUsuario}`).catch(() => ({ data: [] })),
+          apiClient.get(`/products/my-products?author=${nombreUsuario}`).catch(() => ({ data: [] }))
+        ]);
+        setMisPreguntas(qRes.data);
+        setMisProductos(pRes.data);
+      }
+    } catch (e) {
+      console.error("Error cargando datos:", e);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { loadData(); }, [user]);
+  useEffect(() => { loadData(); }, []); // Se ejecuta al montar el componente
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await apiClient.put('/usuarios/profile', form);
-      setUser(response.data);
+      await apiClient.put('/usuarios/profile', form);
       setEditing(false);
       toast.success('Perfil actualizado correctamente');
     } catch (error) {
@@ -88,7 +96,7 @@ export default function Profile() {
         <div className="flex items-start gap-5 -mt-16 mb-6">
           <div className="relative">
             <img
-              src={form.fotoPerfil?.startsWith('data:image') ? form.fotoPerfil : `https://api.dicebear.com/8.x/${form.fotoPerfil}/svg?seed=${user.email}`}
+              src={form.fotoPerfil?.startsWith('data:image') ? form.fotoPerfil : `https://api.dicebear.com/8.x/${form.fotoPerfil}/svg?seed=${form.email}`}
               className="w-28 h-28 rounded-2xl bg-white border-4 border-background shadow-xl object-cover"
             />
             {editing && (
@@ -104,8 +112,8 @@ export default function Profile() {
           </div>
           <div className="flex-1 pt-16 flex justify-between items-start">
             <div>
-              <h1 className="text-xl font-bold">{user?.nombre || 'Usuario'}</h1>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              <h1 className="text-xl font-bold">{form.nombre || 'Usuario'}</h1>
+              <p className="text-sm text-muted-foreground">{form.email}</p>
             </div>
             <div className="flex gap-2">
               <button onClick={() => setEditing(!editing)} className="p-2 rounded-xl bg-muted"><Edit3 className="w-5 h-5" /></button>
@@ -121,7 +129,7 @@ export default function Profile() {
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {avatarStyles.map(style => (
                   <button key={style} onClick={() => setForm({...form, fotoPerfil: style})} className={`p-1 rounded-lg ${form.fotoPerfil === style ? 'border-2 border-primary' : ''}`}>
-                    <img src={`https://api.dicebear.com/8.x/${style}/svg?seed=${user.email}`} className="w-10 h-10" />
+                    <img src={`https://api.dicebear.com/8.x/${style}/svg?seed=${form.email}`} className="w-10 h-10" />
                   </button>
                 ))}
               </div>
@@ -160,7 +168,8 @@ export default function Profile() {
           {editing && <Button onClick={handleSave} disabled={saving} className="w-full h-12 rounded-xl">{saving ? 'Guardando...' : 'Guardar cambios'}</Button>}
 
           <div className="pt-6 border-t space-y-8">
-            <div>
+             {/* ... sección de misPreguntas y misProductos se mantiene igual ... */}
+             <div>
               <h2 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
                 <MessageSquare className="w-4 h-4 text-primary" /> Mis Preguntas en el Foro
               </h2>
