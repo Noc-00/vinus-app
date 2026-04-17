@@ -1,0 +1,16 @@
+# Ignorar dependencias (pesan mil kilos)
+node_modules/
+vinus-front/node_modules/
+server/node_modules/
+
+# Ignorar configuraciones de tu editor (como la carpeta .idea que vi en tu archivo)
+.idea/
+.vscode/
+
+# Ignorar archivos de ambiente (donde irán tus contraseñas luego)
+.env
+
+# Ignorar carpetas de compilación
+dist/
+build/
+target/

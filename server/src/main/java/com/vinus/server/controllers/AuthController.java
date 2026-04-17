@@ -1,0 +1,36 @@
+package com.vinus.server.controllers;
+
+import com.vinus.server.entities.Usuario;
+import com.vinus.server.repositories.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "*")
+public class AuthController {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Usuario loginRequest) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(loginRequest.getEmail());
+
+        if (usuario.isPresent() && usuario.get().getPassword().equals(loginRequest.getPassword())) {
+            return ResponseEntity.ok(usuario.get());
+        }
+        return ResponseEntity.status(401).body("Correo o contraseña incorrectos");
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@RequestParam(required = false) String email) {
+        if (email == null) return ResponseEntity.status(401).build();
+        return usuarioRepository.findByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(401).build());
+    }
+}

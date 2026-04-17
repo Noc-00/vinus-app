@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Inter';
+}
+
+@theme {
+  --font-inter: "Inter", sans-serif;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+}
+
+:root {
+  --background: 220 20% 97%;
+  --foreground: 230 25% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 230 25% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 230 25% 10%;
+  --primary: 252 85% 60%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 15% 93%;
+  --secondary-foreground: 230 25% 15%;
+  --muted: 220 15% 95%;
+  --muted-foreground: 220 10% 45%;
+  --accent: 340 82% 62%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 220 15% 90%;
+  --input: 220 15% 90%;
+  --ring: 252 85% 60%;
+  --radius: 2.5rem;
+}
+
+.dark {
+  --background: 230 20% 8%;
+  --foreground: 220 15% 95%;
+  --card: 230 20% 12%;
+  --card-foreground: 220 15% 95%;
+  --primary: 252 85% 65%;
+  --accent: 340 82% 65%;
+  --border: 230 15% 18%;
+  --input: 230 15% 18%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-inter;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+#tsparticles {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0 !important;
+  pointer-events: none;
+}
+
+#tsparticles canvas {
+  display: block;
+}

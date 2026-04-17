@@ -1,0 +1,41 @@
+"use client"
+
+import { useToast } from "@/components/ui/use-toast";
+import {
+  Toast,
+  ToastClose,
+  ToastDescription,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
+} from "@/components/ui/toast";
+
+export function Toaster() {
+  const { toasts } = useToast();
+
+  return (
+    <ToastProvider>
+      {toasts.map(function ({ id, title, description, action, ...props }) {
+        return (
+          <Toast key={id} {...props}>
+            <div className="grid gap-2">
+              {title && (
+                <ToastTitle className="text-sm font-black tracking-tight">
+                  {title}
+                </ToastTitle>
+              )}
+              {description && (
+                <ToastDescription className="text-xs font-medium opacity-80">
+                  {description}
+                </ToastDescription>
+              )}
+            </div>
+            {action}
+            <ToastClose className="rounded-full hover:bg-muted/50 transition-colors" />
+          </Toast>
+        );
+      })}
+      <ToastViewport />
+    </ToastProvider>
+  );
+}
