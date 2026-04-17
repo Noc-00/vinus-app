@@ -1,15 +1,19 @@
-# 1. Etapa de compilación (usamos una imagen oficial de Maven con Java 21)
+# 1. Etapa de compilación
 FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
-COPY . .
-# Compilamos el proyecto, saltando los tests para ir rápido
+# Copiamos solo el pom.xml primero (optimización de caché)
+COPY pom.xml .
+# Descargamos dependencias antes de copiar el código
+RUN mvn dependency:go-offline
+# Copiamos el resto del código
+COPY src ./src
+# Compilamos
 RUN mvn clean package -DskipTests
 
-# 2. Etapa de ejecución (usamos una imagen ligera de Java 21)
+# 2. Etapa de ejecución
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-# Copiamos el archivo .jar que se creó en la etapa anterior
+# Copiamos el JAR resultante
 COPY --from=build /app/target/*.jar app.jar
-# Abrimos el puerto 8080 que es el estándar de Spring Boot
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar"]
