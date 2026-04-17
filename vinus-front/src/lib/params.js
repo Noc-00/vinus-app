@@ -26,7 +26,8 @@ const getAppParams = () => {
   }
 
   return {
-    apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
+    apiUrl: import.meta.env.VITE_API_URL || '/api',
+
     token: getAppParamValue("token", { storageKey: 'vinus_token' }),
     env: import.meta.env.MODE,
     isDevelopment: import.meta.env.DEV,
