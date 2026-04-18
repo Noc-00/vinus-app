@@ -5,6 +5,10 @@
     {
       "source": "/api/(.*)",
       "destination": "https://vinus-backend-i7y3.onrender.com/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

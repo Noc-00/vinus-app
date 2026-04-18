@@ -51,10 +51,15 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('vinus_token');
+    localStorage.removeItem('usuario_nombre');
+    localStorage.removeItem('userEmail');
     setUser(null);
     setIsAuthenticated(false);
     setAuthError(null);
-    window.location.href = '/welcome';
+
+    // En lugar de ir a /welcome (que no existe como archivo),
+    // ve a la raíz. Tu App detectará que no hay sesión y te mandará a /welcome automáticamente.
+    window.location.href = '/';
   };
 
   return (
