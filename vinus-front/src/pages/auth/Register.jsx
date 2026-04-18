@@ -17,7 +17,7 @@ export default function Register() {
     setLoading(true);
     try {
       const response = await apiClient.post('/auth/register', formData);
-      login(response.data.user, response.data.token);
+      login(response.data, response.data.email);
       navigate('/');
     } catch (error) {
       alert("Error al registrar: " + (error.response?.data || "Intenta de nuevo"));
