@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-baseURL: 'https://vinus-backend-i7y3.onrender.com/api',
+baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
